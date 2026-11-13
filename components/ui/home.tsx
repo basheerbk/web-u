@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Images, MailOpen, Moon, PenLine, X } from "lucide-react";
+import { Images, Moon, X } from "lucide-react";
 
 import { Backdrop } from "@/components/ui/backdrop";
 import { CoffeeNotes, type NotesFocus } from "@/components/ui/coffee-notes";
@@ -81,23 +81,21 @@ export const Home = () => {
         </motion.h1>
 
         <motion.div
-          className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
+          className="mt-8 inline-flex items-center gap-1 rounded-full border border-crema/15 bg-roast/40 p-1 shadow-lg shadow-black/20 backdrop-blur-md"
           {...fadeIn(0.9)}
         >
           <button
             type="button"
             onClick={() => openNotes("read")}
-            className="group inline-flex min-h-12 w-60 items-center justify-center gap-2.5 sm:w-auto rounded-full bg-crema px-7 text-sm font-medium text-roast shadow-[0_8px_30px_-6px_rgba(199,154,107,0.55)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_12px_36px_-6px_rgba(199,154,107,0.7)]"
+            className="min-h-9 rounded-full bg-crema px-4 text-[13px] font-medium text-roast transition hover:bg-white sm:px-5 sm:text-sm"
           >
-            <MailOpen className="h-4 w-4 transition group-hover:-rotate-6" />
             read the letters
           </button>
           <button
             type="button"
             onClick={() => openNotes("write")}
-            className="group inline-flex min-h-12 w-60 items-center justify-center gap-2.5 sm:w-auto rounded-full border border-crema/30 bg-roast/30 px-7 text-sm text-crema/90 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-caramel/80 hover:text-crema"
+            className="min-h-9 rounded-full px-4 text-[13px] text-crema/80 transition hover:bg-crema/10 hover:text-crema sm:px-5 sm:text-sm"
           >
-            <PenLine className="h-4 w-4 transition group-hover:rotate-12" />
             write one for her
           </button>
         </motion.div>
