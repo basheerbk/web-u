@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "db:setup": "node --env-file=.env.local scripts/setup-db.mjs",
     "start": "next start",
     "lint": "eslint ."
   },
