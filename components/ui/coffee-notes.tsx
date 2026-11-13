@@ -16,10 +16,14 @@ type SubmitState =
 const inputClassName =
   "w-full border-b border-roast/25 bg-transparent px-0 py-3 text-sm text-roast outline-none transition placeholder:text-roast/40 focus:border-roast";
 
+export type NotesFocus = "read" | "write";
+
 export const CoffeeNotes = ({
+  focus = "read",
   onClose,
   closeClassName,
 }: {
+  focus?: NotesFocus;
   onClose: () => void;
   closeClassName: string;
 }) => {
@@ -27,6 +31,8 @@ export const CoffeeNotes = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [submitState, setSubmitState] = useState<SubmitState>({ kind: "idle" });
   const startedAt = useRef(0);
+  const writeSection = useRef<HTMLElement>(null);
+  const messageField = useRef<HTMLTextAreaElement>(null);
   const reduceMotion = useReducedMotion();
   const activeNote = coffeeNotes.friends[activeIndex];
   const noteSizeClass =
@@ -39,6 +45,20 @@ export const CoffeeNotes = ({
   useEffect(() => {
     startedAt.current = Date.now();
   }, []);
+
+  // "write one for her" lands straight on the letter form. On phones the form
+  // sits below the notes, so scroll to it once the panel has faded in.
+  useEffect(() => {
+    if (focus !== "write") return;
+    const timer = setTimeout(() => {
+      writeSection.current?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      messageField.current?.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : 450);
+    return () => clearTimeout(timer);
+  }, [focus, reduceMotion]);
 
   const chooseNote = (index: number) => {
     setActiveIndex(index);
@@ -275,7 +295,11 @@ export const CoffeeNotes = ({
             </div>
           </section>
 
-          <section aria-labelledby="leave-note-heading" className="lg:sticky lg:top-20">
+          <section
+            ref={writeSection}
+            aria-labelledby="leave-note-heading"
+            className="scroll-mt-20 lg:sticky lg:top-20"
+          >
             <div className="coffee-letter relative overflow-hidden rounded-[2rem] p-6 text-roast shadow-2xl shadow-black/20 sm:p-9">
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-roast/45">
                 open tab · no. 07
@@ -318,6 +342,7 @@ export const CoffeeNotes = ({
                     your note
                   </span>
                   <textarea
+                    ref={messageField}
                     name="message"
                     required
                     maxLength={1200}

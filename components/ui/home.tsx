@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Coffee, Images, Moon, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Images, MailOpen, Moon, PenLine, X } from "lucide-react";
 
 import { Backdrop } from "@/components/ui/backdrop";
-import { CoffeeNotes } from "@/components/ui/coffee-notes";
-import { BEAN_SHADES, Bean, Steam } from "@/components/ui/coffee";
+import { CoffeeNotes, type NotesFocus } from "@/components/ui/coffee-notes";
+import { Steam } from "@/components/ui/coffee";
 import { PhotoFan } from "@/components/ui/gallery";
 import { Intro, useIntro } from "@/components/ui/intro";
 import { Memories } from "@/components/ui/memories";
@@ -15,54 +15,19 @@ import { site } from "@/lib/site";
 
 type Panel = "album" | "poem" | "notes" | null;
 
-type Particle = {
-  id: number;
-  kind: "bean" | "heart";
-  x: number;
-  y: number;
-  lift: number;
-  rotate: number;
-  delay: number;
-  size: number;
-  color: string;
-};
-
-const random = (min: number, max: number) => min + Math.random() * (max - min);
-
-const makeParticles = (): Particle[] => [
-  ...Array.from({ length: 14 }, (_, id) => ({
-    id,
-    kind: "bean" as const,
-    x: random(-170, 170),
-    y: random(220, 420),
-    lift: random(60, 140),
-    rotate: random(180, 540) * (Math.random() < 0.5 ? -1 : 1),
-    delay: random(0, 0.15),
-    size: random(14, 22),
-    color: BEAN_SHADES[id % BEAN_SHADES.length],
-  })),
-  ...Array.from({ length: 6 }, (_, i) => ({
-    id: 100 + i,
-    kind: "heart" as const,
-    x: random(-110, 110),
-    y: random(-320, -160),
-    lift: 0,
-    rotate: random(-25, 25),
-    delay: random(0.1, 0.4),
-    size: random(18, 26),
-    color: "",
-  })),
-];
-
 const iconButton =
   "flex h-14 w-14 items-center justify-center rounded-full border border-crema/10 bg-espresso/80 text-crema/90 shadow-lg backdrop-blur transition hover:bg-espresso";
 
+const fadeIn = (delay: number) => ({
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 1, delay, ease: "easeOut" as const },
+});
+
 export const Home = () => {
   const [panel, setPanel] = useState<Panel>(null);
-  const [pressed, setPressed] = useState(false);
-  const [particles, setParticles] = useState<Particle[]>([]);
+  const [notesFocus, setNotesFocus] = useState<NotesFocus>("read");
   const [backdropReady, setBackdropReady] = useState(false);
-  const reduceMotion = useReducedMotion();
   const showIntro = useIntro(backdropReady);
 
   // Each panel gets a history entry so the phone's back button closes it
@@ -70,6 +35,11 @@ export const Home = () => {
   const openPanel = (next: Exclude<Panel, null>) => {
     window.history.pushState({ panel: next }, "");
     setPanel(next);
+  };
+
+  const openNotes = (focus: NotesFocus) => {
+    setNotesFocus(focus);
+    openPanel("notes");
   };
 
   const closePanel = useCallback(() => {
@@ -92,11 +62,6 @@ export const Home = () => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [panel, closePanel]);
 
-  const pressButton = () => {
-    setPressed(true);
-    if (!reduceMotion) setParticles(makeParticles());
-  };
-
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-roast text-crema">
       <Intro visible={showIntro} />
@@ -110,85 +75,32 @@ export const Home = () => {
         <Steam className="h-9 w-9 text-crema/35" />
         <motion.h1
           className="mt-4 max-w-xl font-display text-3xl font-light italic leading-tight tracking-tight [text-wrap:balance] md:text-5xl"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+          {...fadeIn(0.3)}
         >
           {site.headline}
         </motion.h1>
 
-        <div className="relative mt-10">
+        <motion.div
+          className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
+          {...fadeIn(0.9)}
+        >
           <button
             type="button"
-            onClick={pressButton}
-            disabled={pressed}
-            className="min-h-11 rounded-full border border-crema/25 px-6 py-2 text-sm text-crema/80 backdrop-blur-sm transition hover:border-caramel/70 hover:text-crema disabled:cursor-default disabled:opacity-60"
+            onClick={() => openNotes("read")}
+            className="group inline-flex min-h-12 w-60 items-center justify-center gap-2.5 sm:w-auto rounded-full bg-crema px-7 text-sm font-medium text-roast shadow-[0_8px_30px_-6px_rgba(199,154,107,0.55)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_12px_36px_-6px_rgba(199,154,107,0.7)]"
           >
-            {pressed ? "you pressed it anyway ☕" : "please, don't press this"}
+            <MailOpen className="h-4 w-4 transition group-hover:-rotate-6" />
+            read the letters
           </button>
-
-          <div className="pointer-events-none absolute left-1/2 top-1/2">
-            {particles.map((particle) =>
-              particle.kind === "bean" ? (
-                <motion.div
-                  key={particle.id}
-                  className="absolute"
-                  style={{
-                    width: particle.size,
-                    height: particle.size * 1.33,
-                    marginLeft: -particle.size / 2,
-                    marginTop: -particle.size / 2,
-                  }}
-                  initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-                  animate={{
-                    x: [0, particle.x * 0.6, particle.x],
-                    y: [0, -particle.lift, particle.y],
-                    rotate: particle.rotate,
-                    opacity: [1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 1.6,
-                    delay: particle.delay,
-                    times: [0, 0.3, 1],
-                    ease: ["easeOut", "easeIn"],
-                  }}
-                >
-                  <Bean color={particle.color} className="h-full w-full" />
-                </motion.div>
-              ) : (
-                <motion.span
-                  key={particle.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ fontSize: particle.size }}
-                  initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
-                  animate={{
-                    x: particle.x,
-                    y: particle.y,
-                    opacity: [0, 1, 0],
-                    scale: 1.1,
-                    rotate: particle.rotate,
-                  }}
-                  transition={{ duration: 2.4, delay: particle.delay, ease: "easeOut" }}
-                >
-                  ❤️
-                </motion.span>
-              )
-            )}
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {pressed && (
-            <motion.p
-              className="mt-6 max-w-sm font-display text-base italic text-crema/75"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
-              {site.secretNote}
-            </motion.p>
-          )}
-        </AnimatePresence>
+          <button
+            type="button"
+            onClick={() => openNotes("write")}
+            className="group inline-flex min-h-12 w-60 items-center justify-center gap-2.5 sm:w-auto rounded-full border border-crema/30 bg-roast/30 px-7 text-sm text-crema/90 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-caramel/80 hover:text-crema"
+          >
+            <PenLine className="h-4 w-4 transition group-hover:rotate-12" />
+            write one for her
+          </button>
+        </motion.div>
       </div>
 
       {/* Album button */}
@@ -209,16 +121,6 @@ export const Home = () => {
         className={`absolute left-5 top-5 z-20 ${iconButton}`}
       >
         <Moon className="h-6 w-6" />
-      </button>
-
-      {/* Coffee notes */}
-      <button
-        type="button"
-        aria-label="Read and leave coffee notes"
-        onClick={() => openPanel("notes")}
-        className={`absolute bottom-5 right-5 z-20 ${iconButton}`}
-      >
-        <Coffee className="h-6 w-6" />
       </button>
 
       {/* Album */}
@@ -259,7 +161,11 @@ export const Home = () => {
 
       <AnimatePresence>
         {panel === "notes" && (
-          <CoffeeNotes onClose={closePanel} closeClassName={iconButton} />
+          <CoffeeNotes
+            focus={notesFocus}
+            onClose={closePanel}
+            closeClassName={iconButton}
+          />
         )}
       </AnimatePresence>
     </div>

@@ -1,7 +1,6 @@
 export const site = {
   name: "Nayana",
   headline: "for nayana — brewed with love.",
-  secretNote: "you weren't supposed to press it. now you owe me a coffee.",
   coffeeNotes: {
     title: "things her people would say over coffee.",
     intro:
