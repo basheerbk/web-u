@@ -1,7 +1,7 @@
 "use client";
 
-import { Ref, forwardRef } from "react";
 import { motion, useMotionValue, type Variants } from "framer-motion";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { photoSrc } from "@/lib/media";
@@ -149,16 +149,6 @@ const getStableRotation = (src: string, direction?: Direction) => {
   return degrees * (direction === "left" ? -1 : 1);
 };
 
-const MotionImage = motion.create(
-  forwardRef(function MotionImage(
-    props: React.ImgHTMLAttributes<HTMLImageElement>,
-    ref: Ref<HTMLImageElement>
-  ) {
-    const { alt = "", ...imageProps } = props;
-    return <img ref={ref} alt={alt} {...imageProps} />;
-  })
-);
-
 export const Photo = ({
   src,
   alt,
@@ -166,7 +156,6 @@ export const Photo = ({
   direction,
   width,
   height,
-  ...props
 }: {
   src: string;
   alt: string;
@@ -232,16 +221,16 @@ export const Photo = ({
       draggable={false}
       tabIndex={0}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-3xl shadow-sm">
-        <MotionImage
+      <div className="relative h-full w-full overflow-hidden rounded-3xl bg-espresso/60 shadow-sm">
+        <Image
           className={cn(
             "warm-tone h-full w-full rounded-3xl object-cover transition-[filter] duration-500 group-active:warm-tone-none [@media(hover:hover)]:group-hover:warm-tone-none"
           )}
           src={src}
           alt={alt}
-          width={width}
-          height={height}
-          {...props}
+          fill
+          sizes={`${width}px`}
+          loading="eager"
           draggable={false}
         />
       </div>

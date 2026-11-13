@@ -39,26 +39,28 @@ export const Backdrop = ({
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden bg-roast">
-      <video
-        ref={videoRef}
-        key={current.src}
-        src={current.src}
-        poster={current.poster}
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        className="warm-tone h-full w-full object-cover object-center"
-        onCanPlay={onReady}
-        onEnded={() => {
-          failedVideos.current = 0;
-          next();
-        }}
-        onError={() => {
-          failedVideos.current += 1;
-          if (failedVideos.current < playlist.length) next();
-        }}
-      />
+      {!paused && (
+        <video
+          ref={videoRef}
+          key={current.src}
+          src={current.src}
+          poster={current.poster}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          className="warm-tone h-full w-full object-cover object-center"
+          onCanPlay={onReady}
+          onEnded={() => {
+            failedVideos.current = 0;
+            next();
+          }}
+          onError={() => {
+            failedVideos.current += 1;
+            if (failedVideos.current < playlist.length) next();
+          }}
+        />
+      )}
       <div className="absolute inset-0 bg-roast/50" />
       <div className="absolute inset-0 bg-gradient-to-b from-roast/40 via-transparent to-roast/70" />
     </div>
