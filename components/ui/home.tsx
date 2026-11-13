@@ -81,22 +81,15 @@ export const Home = () => {
         </motion.h1>
 
         <motion.div
-          className="mt-8 inline-flex items-center gap-1 rounded-full border border-crema/15 bg-roast/40 p-1 shadow-lg shadow-black/20 backdrop-blur-md"
+          className="mt-8"
           {...fadeIn(0.9)}
         >
           <button
             type="button"
-            onClick={() => openNotes("read")}
-            className="min-h-9 rounded-full bg-crema px-4 text-[13px] font-medium text-roast transition hover:bg-white sm:px-5 sm:text-sm"
-          >
-            read the letters
-          </button>
-          <button
-            type="button"
             onClick={() => openNotes("write")}
-            className="min-h-9 rounded-full px-4 text-[13px] text-crema/80 transition hover:bg-crema/10 hover:text-crema sm:px-5 sm:text-sm"
+            className="min-h-10 rounded-full border border-crema/20 bg-roast/40 px-5 text-[13px] text-crema/90 shadow-lg shadow-black/20 backdrop-blur-md transition hover:border-caramel/60 hover:bg-roast/60 hover:text-crema sm:text-sm"
           >
-            write one for her
+            write a letter for her
           </button>
         </motion.div>
       </div>
