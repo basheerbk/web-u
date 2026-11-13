@@ -226,7 +226,7 @@ export const CoffeeMachine = ({
 
   return (
     <div
-      className="relative flex justify-center pb-6 pt-10 [perspective:1100px]"
+      className="relative flex justify-center pb-4 pt-6 [perspective:1100px]"
       onPointerMove={onPointerMove}
       onPointerLeave={resetTilt}
     >

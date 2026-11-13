@@ -34,23 +34,21 @@ const PrintedLetter = ({
 }) => {
   const reduceMotion = useReducedMotion();
   const sizeClass =
-    note.message.length > 420
-      ? "text-[15px] leading-[1.7] sm:text-base"
-      : note.message.length > 200
-        ? "text-base leading-[1.65] sm:text-lg"
-        : "text-xl leading-[1.5] sm:text-2xl";
+    note.message.length > 200
+      ? "text-[13.5px] leading-[1.6]"
+      : "text-base leading-[1.5]";
 
   return (
-    <div className="relative mx-auto w-full max-w-[340px]">
+    <div className="relative mx-auto w-full max-w-[300px]">
       {/* printer slot the receipt feeds out of */}
       <div
         aria-hidden
-        className="relative z-10 mx-auto h-3 w-[300px] rounded-full bg-[#050302] shadow-[0_0_0_3px_#2a1d15,0_0_0_4px_rgba(241,228,209,0.12),inset_0_2px_4px_rgba(0,0,0,1)]"
+        className="relative z-10 mx-auto h-2.5 w-[270px] rounded-full bg-[#050302] shadow-[0_0_0_3px_#2a1d15,0_0_0_4px_rgba(241,228,209,0.12),inset_0_2px_4px_rgba(0,0,0,1)]"
       />
-      <div className="relative -mt-1.5 min-h-[120px] overflow-hidden px-[14px] pb-10">
+      <div className="relative -mt-1 min-h-[80px] overflow-hidden px-[14px] pb-6">
         {phase === "brewing" && (
           <motion.p
-            className="pt-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-crema/40"
+            className="pt-5 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-crema/40"
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 1.6, repeat: Infinity }}
           >
@@ -63,7 +61,7 @@ const PrintedLetter = ({
               id="brewed-letter"
               role="tabpanel"
               key={brewKey}
-              className="coffee-ticket relative px-6 pb-7 pt-8 text-roast"
+              className="coffee-ticket relative px-4 pb-4 pt-5 text-roast"
               initial={reduceMotion ? false : { y: "-100%" }}
               animate={{ y: 0 }}
               exit={
@@ -73,7 +71,7 @@ const PrintedLetter = ({
               }
               transition={{ duration: 1.5, ease: [0.3, 0.1, 0.3, 1] }}
             >
-              <div className="flex items-start justify-between gap-4 border-b border-dashed border-roast/25 pb-3 font-mono text-[9px] uppercase tracking-[0.2em] text-roast/55">
+              <div className="flex items-start justify-between gap-3 border-b border-dashed border-roast/25 pb-2 font-mono text-[8px] uppercase tracking-[0.18em] text-roast/55">
                 <div>
                   <p>nayana · café</p>
                   <p className="mt-1 text-roast/80">1 × {note.order}</p>
@@ -84,15 +82,18 @@ const PrintedLetter = ({
                   <span className="text-roast/80">nayana</span>
                 </p>
               </div>
-              <blockquote
-                className={`mt-5 whitespace-pre-line font-display font-light italic ${sizeClass}`}
-              >
-                {note.message}
-              </blockquote>
-              <p className="mt-6 text-right font-display text-lg italic text-bean">
+              {/* Long letters scroll inside the receipt so the machine stays in view. */}
+              <div className="mt-3 max-h-[190px] overflow-y-auto overscroll-contain pr-1 [mask-image:linear-gradient(180deg,#000_85%,transparent)] [scrollbar-width:thin]">
+                <blockquote
+                  className={`whitespace-pre-line pb-3 font-display font-light italic ${sizeClass}`}
+                >
+                  {note.message}
+                </blockquote>
+              </div>
+              <p className="mt-2 text-right font-display text-base italic text-bean">
                 — {note.author}
               </p>
-              <p className="mt-5 border-t border-dashed border-roast/25 pt-3 text-center font-mono text-[8px] uppercase tracking-[0.3em] text-roast/40">
+              <p className="mt-3 border-t border-dashed border-roast/25 pt-2 text-center font-mono text-[7px] uppercase tracking-[0.3em] text-roast/40">
                 paid in full · with love
               </p>
             </motion.article>
@@ -259,7 +260,7 @@ export const CoffeeNotes = ({
 
         <div className="mt-10 grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <section aria-label="The coffee machine" className="min-w-0">
-            <div className="lg:[zoom:1.18]">
+            <div>
               <CoffeeMachine
                 drinks={drinks}
                 activeIndex={activeIndex}

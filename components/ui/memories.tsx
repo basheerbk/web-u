@@ -207,14 +207,17 @@ const MemoryVideo = ({ video, index }: { video: Video; index: number }) => {
           onClick={toggleSound}
           className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-caramel"
         >
-          <span className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-roast/65 px-3 py-1.5 text-[10px] tracking-[0.12em] text-crema/85 backdrop-blur-sm sm:text-xs">
-            {muted ? (
+          {/* Only the first video spells out the hint; the rest keep a quiet icon. */}
+          {index === 0 && muted ? (
+            <span className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-roast/65 px-3 py-1.5 text-[10px] tracking-[0.12em] text-crema/85 backdrop-blur-sm sm:text-xs">
               <VolumeX className="h-3.5 w-3.5" />
-            ) : (
-              <Volume2 className="h-3.5 w-3.5" />
-            )}
-            {muted ? "tap for sound" : "sound on · tap to mute"}
-          </span>
+              tap for sound
+            </span>
+          ) : (
+            <span className="absolute bottom-3 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-roast/55 text-crema/80 backdrop-blur-sm">
+              {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+            </span>
+          )}
         </button>
       )}
 
