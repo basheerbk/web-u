@@ -9,6 +9,7 @@ import { CoffeeNotes, type NotesFocus } from "@/components/ui/coffee-notes";
 import { Steam } from "@/components/ui/coffee";
 import { PhotoFan } from "@/components/ui/gallery";
 import { Intro, useIntro } from "@/components/ui/intro";
+import { MusicButton } from "@/components/ui/music";
 import { Memories } from "@/components/ui/memories";
 import { Poem } from "@/components/ui/poem";
 import { site } from "@/lib/site";
@@ -115,7 +116,7 @@ export const Home = () => {
         <Moon className="h-6 w-6" />
       </button>
 
-      {/* A tiny mountain in the corner with a quiet secret */}
+      {/* Bottom-right corner: the little mountain secret and the music */}
       <div className="absolute bottom-5 right-5 z-20 flex flex-row-reverse items-center gap-2">
         <button
           type="button"
@@ -125,6 +126,7 @@ export const Home = () => {
         >
           <MountainSnow className="h-[18px] w-[18px]" />
         </button>
+        <MusicButton />
         <AnimatePresence>
           {mountainNote > 0 && (
             <motion.p

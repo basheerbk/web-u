@@ -3,6 +3,19 @@ export const site = {
   headline: "for nayana — brewed with love.",
   // Shown for a moment when someone taps the little mountain on the home screen.
   mountainNote: "deviating…",
+  // Background songs, played in order from the music button.
+  music: [
+    {
+      title: "strawberries & cigarettes",
+      artist: "Troye Sivan",
+      src: "/nayana/music/strawberries-and-cigarettes.mp3",
+    },
+    {
+      title: "i wanna be yours",
+      artist: "Arctic Monkeys",
+      src: "/nayana/music/i-wanna-be-yours.mp3",
+    },
+  ],
   coffeeNotes: {
     title: "things her people would say over coffee.",
     intro:
