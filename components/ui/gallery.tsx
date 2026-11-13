@@ -1,6 +1,6 @@
 "use client";
 
-import { Ref, forwardRef, useState, useEffect } from "react";
+import { Ref, forwardRef } from "react";
 import { motion, useMotionValue, type Variants } from "framer-motion";
 
 import { cn } from "@/lib/utils";
@@ -141,19 +141,21 @@ export const PhotoFan = () => {
   );
 };
 
-function getRandomNumberInRange(min: number, max: number): number {
-  if (min >= max) {
-    throw new Error("Min value should be less than max value");
-  }
-  return Math.random() * (max - min) + min;
-}
+const getStableRotation = (src: string, direction?: Direction) => {
+  const hash = src
+    .split("")
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
+  const degrees = 1 + (hash % 300) / 100;
+  return degrees * (direction === "left" ? -1 : 1);
+};
 
 const MotionImage = motion.create(
   forwardRef(function MotionImage(
     props: React.ImgHTMLAttributes<HTMLImageElement>,
     ref: Ref<HTMLImageElement>
   ) {
-    return <img ref={ref} {...props} />;
+    const { alt = "", ...imageProps } = props;
+    return <img ref={ref} alt={alt} {...imageProps} />;
   })
 );
 
@@ -173,16 +175,10 @@ export const Photo = ({
   width: number;
   height: number;
 }) => {
-  const [rotation, setRotation] = useState<number>(0);
   const isTouch = useIsTouch();
   const x = useMotionValue(200);
   const y = useMotionValue(200);
-
-  useEffect(() => {
-    const randomRotation =
-      getRandomNumberInRange(1, 4) * (direction === "left" ? -1 : 1);
-    setRotation(randomRotation);
-  }, []);
+  const rotation = getStableRotation(src, direction);
 
   function handleMouse(event: {
     currentTarget: { getBoundingClientRect: () => any };

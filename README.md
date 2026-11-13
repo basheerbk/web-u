@@ -151,6 +151,24 @@ src: "https://your-domain.com/image.jpg" // External images
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
+## Coffee Notes
+
+The friend messages live in `lib/site.ts` under `coffeeNotes.friends`. The six
+entries are intentionally marked as placeholders until the real names and words
+are supplied.
+
+Visitor notes are posted to `/api/letters` and delivered through a private
+webhook. Add this server-side environment variable to the deployment:
+
+```bash
+LETTER_INBOX_WEBHOOK_URL=https://your-private-webhook-url
+```
+
+Generic webhook payloads include `name`, `message`, `submittedAt`, and `source`.
+Slack and Discord webhook URLs are recognized and receive their native `text`
+or `content` shape. Without the variable, the form preserves the visitor's text
+and clearly reports that the letterbox is not connected.
+
 ## Dependencies
 
 ### Core Dependencies

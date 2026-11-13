@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Images, Moon, X } from "lucide-react";
+import { Coffee, Images, Moon, X } from "lucide-react";
 
 import { Backdrop } from "@/components/ui/backdrop";
+import { CoffeeNotes } from "@/components/ui/coffee-notes";
 import { BEAN_SHADES, Bean, Steam } from "@/components/ui/coffee";
 import { PhotoFan } from "@/components/ui/gallery";
 import { Intro, useIntro } from "@/components/ui/intro";
@@ -12,7 +13,7 @@ import { Memories } from "@/components/ui/memories";
 import { Poem } from "@/components/ui/poem";
 import { site } from "@/lib/site";
 
-type Panel = "album" | "poem" | null;
+type Panel = "album" | "poem" | "notes" | null;
 
 type Particle = {
   id: number;
@@ -100,7 +101,7 @@ export const Home = () => {
     <div className="relative h-dvh w-full overflow-hidden bg-roast text-crema">
       <Intro visible={showIntro} />
       <Backdrop
-        paused={panel === "album" || panel === "poem"}
+        paused={panel !== null}
         onReady={() => setBackdropReady(true)}
       />
 
@@ -210,6 +211,16 @@ export const Home = () => {
         <Moon className="h-6 w-6" />
       </button>
 
+      {/* Coffee notes */}
+      <button
+        type="button"
+        aria-label="Read and leave coffee notes"
+        onClick={() => openPanel("notes")}
+        className={`absolute bottom-5 right-5 z-20 ${iconButton}`}
+      >
+        <Coffee className="h-6 w-6" />
+      </button>
+
       {/* Album */}
       <AnimatePresence>
         {panel === "album" && (
@@ -244,6 +255,12 @@ export const Home = () => {
 
       <AnimatePresence>
         {panel === "poem" && <Poem onClose={closePanel} closeClassName={iconButton} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {panel === "notes" && (
+          <CoffeeNotes onClose={closePanel} closeClassName={iconButton} />
+        )}
       </AnimatePresence>
     </div>
   );
