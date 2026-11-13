@@ -16,7 +16,17 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "var(--font-malayalam)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-malayalam)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
       colors: {
+        roast: "#120c08",
+        espresso: "#2a1d15",
+        crema: "#f1e4d1",
+        caramel: "#c79a6b",
+        bean: "#6b4430",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,9 +1,9 @@
-import { PhotoGallery } from "@/components/ui/gallery";
+import { Home } from "@/components/ui/home";
 
-export default function Home() {
+export default function Page() {
   return (
-    <main className="overflow-hidden">  
-      <PhotoGallery /> 
+    <main>
+      <Home />
     </main>
   );
 }
