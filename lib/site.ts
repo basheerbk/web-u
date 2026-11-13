@@ -1,6 +1,8 @@
 export const site = {
   name: "Nayana",
   headline: "for nayana — brewed with love.",
+  // Shown for a moment when someone taps the little mountain on the home screen.
+  mountainNote: "deviating…",
   coffeeNotes: {
     title: "things her people would say over coffee.",
     intro:

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Images, Moon, X } from "lucide-react";
+import { Images, MountainSnow, Moon, X } from "lucide-react";
 
 import { Backdrop } from "@/components/ui/backdrop";
 import { CoffeeNotes, type NotesFocus } from "@/components/ui/coffee-notes";
@@ -28,6 +28,7 @@ export const Home = () => {
   const [panel, setPanel] = useState<Panel>(null);
   const [notesFocus, setNotesFocus] = useState<NotesFocus>("read");
   const [backdropReady, setBackdropReady] = useState(false);
+  const [mountainNote, setMountainNote] = useState(0);
   const showIntro = useIntro(backdropReady);
 
   // Each panel gets a history entry so the phone's back button closes it
@@ -113,6 +114,32 @@ export const Home = () => {
       >
         <Moon className="h-6 w-6" />
       </button>
+
+      {/* A tiny mountain in the corner with a quiet secret */}
+      <div className="absolute bottom-5 right-5 z-20 flex flex-row-reverse items-center gap-2">
+        <button
+          type="button"
+          aria-label="A little secret"
+          onClick={() => setMountainNote((n) => n + 1)}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-crema/45 transition hover:text-crema/90 active:scale-90"
+        >
+          <MountainSnow className="h-[18px] w-[18px]" />
+        </button>
+        <AnimatePresence>
+          {mountainNote > 0 && (
+            <motion.p
+              key={mountainNote}
+              role="status"
+              className="font-display text-sm italic text-crema/75"
+              initial={{ opacity: 0, x: 6 }}
+              animate={{ opacity: [0, 1, 1, 0], x: 0 }}
+              transition={{ duration: 3, times: [0, 0.15, 0.8, 1] }}
+            >
+              {site.mountainNote}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Album */}
       <AnimatePresence>
