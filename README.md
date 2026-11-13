@@ -153,21 +153,21 @@ src: "https://your-domain.com/image.jpg" // External images
 
 ## Coffee Notes
 
-The friend messages live in `lib/site.ts` under `coffeeNotes.friends`. The six
-entries are intentionally marked as placeholders until the real names and words
-are supplied.
+The friend messages live in `lib/site.ts` under `coffeeNotes.friends`. Febi,
+Madhavi, and Sneha currently have real notes; the remaining three cups are
+clearly marked as placeholders until their words are supplied.
 
-Visitor notes are posted to `/api/letters` and delivered through a private
-webhook. Add this server-side environment variable to the deployment:
+Visitor notes are posted to `/api/letters` and stored privately as `pending`
+rows in Neon Postgres. Apply `db/schema.sql`, then add the pooled Neon connection
+string as a server-side environment variable in the deployment:
 
 ```bash
-LETTER_INBOX_WEBHOOK_URL=https://your-private-webhook-url
+DATABASE_URL=postgresql://...
 ```
 
-Generic webhook payloads include `name`, `message`, `submittedAt`, and `source`.
-Slack and Discord webhook URLs are recognized and receive their native `text`
-or `content` shape. Without the variable, the form preserves the visitor's text
-and clearly reports that the letterbox is not connected.
+Submitted notes are not exposed through a public read endpoint. Without the
+variable or schema, the form preserves the visitor's text and clearly reports
+that the letterbox is unavailable.
 
 ## Dependencies
 

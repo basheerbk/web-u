@@ -29,6 +29,12 @@ export const CoffeeNotes = ({
   const startedAt = useRef(0);
   const reduceMotion = useReducedMotion();
   const activeNote = coffeeNotes.friends[activeIndex];
+  const noteSizeClass =
+    activeNote.message.length > 320
+      ? "text-lg leading-[1.6] sm:text-xl"
+      : activeNote.message.length > 170
+        ? "text-xl leading-[1.55] sm:text-2xl"
+        : "text-2xl leading-[1.45] sm:text-3xl";
 
   useEffect(() => {
     startedAt.current = Date.now();
@@ -229,7 +235,9 @@ export const CoffeeNotes = ({
                         </span>
                       </div>
 
-                      <blockquote className="mt-7 font-display text-2xl font-light italic leading-[1.45] sm:text-3xl">
+                      <blockquote
+                        className={`mt-7 whitespace-pre-line font-display font-light italic ${noteSizeClass}`}
+                      >
                         “{activeNote.message}”
                       </blockquote>
                     </div>

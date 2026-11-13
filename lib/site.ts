@@ -11,23 +11,26 @@ export const site = {
       {
         id: "flat-white",
         order: "flat white",
-        author: "a friend",
-        message: "This cup is reserved for a note from one of Nayana's people.",
-        placeholder: true,
+        author: "Febi",
+        message:
+          "Nayana! May you always have that beautiful laugh and spark, year after year. I’ll always be here as your forever friend, just like you were the first to reach out and introduce yourself to me on my first day of college. It’s funny how a simple introduction turned into such a special friendship. So glad that day brought you into my life. Wishing you a year full of happiness, love, laughter and everything your heart wishes for. Keep shining and stay just the way you are.",
+        placeholder: false,
       },
       {
         id: "cappuccino",
         order: "cappuccino",
-        author: "a friend",
-        message: "A friend's words will be poured here soon.",
-        placeholder: true,
+        author: "Madhavi",
+        message:
+          "Romba periya aal avanga\n\nAt times my hands can’t reach you,\nI hope my love does. ♥️",
+        placeholder: false,
       },
       {
         id: "cold-brew",
         order: "cold brew",
-        author: "a friend",
-        message: "This is a saved seat for a story about Nayana.",
-        placeholder: true,
+        author: "Sneha",
+        message:
+          "Nayana,\nYou are one of my comfort people, someone I can have real conversations with. I admire your maturity, honesty, kindness, and the way you stay true to yourself. Never lose that.\nJust be you, and be my close buddy forever. ❤️\nLove,",
+        placeholder: false,
       },
       {
         id: "mocha",

@@ -1,3 +1,5 @@
+import { getDatabase } from "@/lib/db";
+
 const MAX_NAME_LENGTH = 80;
 const MAX_MESSAGE_LENGTH = 1200;
 
@@ -44,58 +46,24 @@ export async function POST(request: Request) {
     return Response.json({ message: "Take a breath, then try sending that again." }, { status: 429 });
   }
 
-  const webhookUrl = process.env.LETTER_INBOX_WEBHOOK_URL;
-
-  if (!webhookUrl) {
+  try {
+    const sql = getDatabase();
+    await sql`
+      INSERT INTO coffee_notes (name, message)
+      VALUES (${name}, ${message})
+    `;
+  } catch (error) {
+    console.error("Coffee note storage failed", error);
     return Response.json(
       {
         message:
-          "The café letterbox has not been connected yet. Your words are still here — please copy them and try again soon.",
+          "The letterbox is having a moment. Your note is still here — please try again soon.",
       },
       { status: 503 }
     );
   }
 
-  const submittedAt = new Date().toISOString();
-  const readableText = `New coffee note for Nayana\n\nFrom: ${name}\n\n${message}`;
-
-  try {
-    const inbox = new URL(webhookUrl);
-    const webhookBody = inbox.hostname.includes("discord")
-      ? { content: readableText }
-      : inbox.hostname.includes("slack")
-        ? { text: readableText }
-        : {
-            content: readableText,
-            text: readableText,
-            name,
-            message,
-            submittedAt,
-            source: "nayana-coffee-notes",
-          };
-
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(webhookBody),
-      signal: AbortSignal.timeout(8_000),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Inbox returned ${response.status}`);
-    }
-  } catch (error) {
-    console.error("Coffee note delivery failed", error);
-    return Response.json(
-      {
-        message:
-          "The letterbox is having a moment. Your note is still here — please try once more.",
-      },
-      { status: 502 }
-    );
-  }
-
   return Response.json({
-    message: "Your note is on its way to Nayana's little coffee counter.",
+    message: "Your note is tucked safely into Nayana's little coffee counter.",
   });
 }
