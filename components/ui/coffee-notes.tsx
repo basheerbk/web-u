@@ -197,7 +197,7 @@ export const CoffeeNotes = ({
                 <div
                   role="tablist"
                   aria-label="Choose a friend's note"
-                  className="mt-6 grid grid-cols-3 gap-2 sm:grid-cols-6"
+                  className="mt-6 grid grid-cols-5 gap-1.5 sm:gap-2"
                 >
                   {coffeeNotes.friends.map((note, index) => (
                     <button
