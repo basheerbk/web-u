@@ -1,7 +1,7 @@
 "use client";
 
-import { Ref, forwardRef, useState, useEffect } from "react";
 import { motion, useMotionValue, type Variants } from "framer-motion";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { photoSrc } from "@/lib/media";
@@ -141,21 +141,13 @@ export const PhotoFan = () => {
   );
 };
 
-function getRandomNumberInRange(min: number, max: number): number {
-  if (min >= max) {
-    throw new Error("Min value should be less than max value");
-  }
-  return Math.random() * (max - min) + min;
-}
-
-const MotionImage = motion.create(
-  forwardRef(function MotionImage(
-    props: React.ImgHTMLAttributes<HTMLImageElement>,
-    ref: Ref<HTMLImageElement>
-  ) {
-    return <img ref={ref} {...props} />;
-  })
-);
+const getStableRotation = (src: string, direction?: Direction) => {
+  const hash = src
+    .split("")
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
+  const degrees = 1 + (hash % 300) / 100;
+  return degrees * (direction === "left" ? -1 : 1);
+};
 
 export const Photo = ({
   src,
@@ -164,7 +156,6 @@ export const Photo = ({
   direction,
   width,
   height,
-  ...props
 }: {
   src: string;
   alt: string;
@@ -173,16 +164,10 @@ export const Photo = ({
   width: number;
   height: number;
 }) => {
-  const [rotation, setRotation] = useState<number>(0);
   const isTouch = useIsTouch();
   const x = useMotionValue(200);
   const y = useMotionValue(200);
-
-  useEffect(() => {
-    const randomRotation =
-      getRandomNumberInRange(1, 4) * (direction === "left" ? -1 : 1);
-    setRotation(randomRotation);
-  }, []);
+  const rotation = getStableRotation(src, direction);
 
   function handleMouse(event: {
     currentTarget: { getBoundingClientRect: () => any };
@@ -236,16 +221,16 @@ export const Photo = ({
       draggable={false}
       tabIndex={0}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-3xl shadow-sm">
-        <MotionImage
+      <div className="relative h-full w-full overflow-hidden rounded-3xl bg-espresso/60 shadow-sm">
+        <Image
           className={cn(
             "warm-tone h-full w-full rounded-3xl object-cover transition-[filter] duration-500 group-active:warm-tone-none [@media(hover:hover)]:group-hover:warm-tone-none"
           )}
           src={src}
           alt={alt}
-          width={width}
-          height={height}
-          {...props}
+          fill
+          sizes={`${width}px`}
+          loading="eager"
           draggable={false}
         />
       </div>

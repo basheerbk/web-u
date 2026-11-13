@@ -1,67 +1,34 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Images, Moon, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Images, MountainSnow, Moon, X } from "lucide-react";
 
 import { Backdrop } from "@/components/ui/backdrop";
-import { BEAN_SHADES, Bean, Steam } from "@/components/ui/coffee";
+import { CoffeeNotes, type NotesFocus } from "@/components/ui/coffee-notes";
+import { Steam } from "@/components/ui/coffee";
 import { PhotoFan } from "@/components/ui/gallery";
 import { Intro, useIntro } from "@/components/ui/intro";
 import { Memories } from "@/components/ui/memories";
 import { Poem } from "@/components/ui/poem";
 import { site } from "@/lib/site";
 
-type Panel = "album" | "poem" | null;
-
-type Particle = {
-  id: number;
-  kind: "bean" | "heart";
-  x: number;
-  y: number;
-  lift: number;
-  rotate: number;
-  delay: number;
-  size: number;
-  color: string;
-};
-
-const random = (min: number, max: number) => min + Math.random() * (max - min);
-
-const makeParticles = (): Particle[] => [
-  ...Array.from({ length: 14 }, (_, id) => ({
-    id,
-    kind: "bean" as const,
-    x: random(-170, 170),
-    y: random(220, 420),
-    lift: random(60, 140),
-    rotate: random(180, 540) * (Math.random() < 0.5 ? -1 : 1),
-    delay: random(0, 0.15),
-    size: random(14, 22),
-    color: BEAN_SHADES[id % BEAN_SHADES.length],
-  })),
-  ...Array.from({ length: 6 }, (_, i) => ({
-    id: 100 + i,
-    kind: "heart" as const,
-    x: random(-110, 110),
-    y: random(-320, -160),
-    lift: 0,
-    rotate: random(-25, 25),
-    delay: random(0.1, 0.4),
-    size: random(18, 26),
-    color: "",
-  })),
-];
+type Panel = "album" | "poem" | "notes" | null;
 
 const iconButton =
   "flex h-14 w-14 items-center justify-center rounded-full border border-crema/10 bg-espresso/80 text-crema/90 shadow-lg backdrop-blur transition hover:bg-espresso";
 
+const fadeIn = (delay: number) => ({
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 1, delay, ease: "easeOut" as const },
+});
+
 export const Home = () => {
   const [panel, setPanel] = useState<Panel>(null);
-  const [pressed, setPressed] = useState(false);
-  const [particles, setParticles] = useState<Particle[]>([]);
+  const [notesFocus, setNotesFocus] = useState<NotesFocus>("read");
   const [backdropReady, setBackdropReady] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const [mountainNote, setMountainNote] = useState(0);
   const showIntro = useIntro(backdropReady);
 
   // Each panel gets a history entry so the phone's back button closes it
@@ -69,6 +36,11 @@ export const Home = () => {
   const openPanel = (next: Exclude<Panel, null>) => {
     window.history.pushState({ panel: next }, "");
     setPanel(next);
+  };
+
+  const openNotes = (focus: NotesFocus) => {
+    setNotesFocus(focus);
+    openPanel("notes");
   };
 
   const closePanel = useCallback(() => {
@@ -91,16 +63,11 @@ export const Home = () => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [panel, closePanel]);
 
-  const pressButton = () => {
-    setPressed(true);
-    if (!reduceMotion) setParticles(makeParticles());
-  };
-
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-roast text-crema">
       <Intro visible={showIntro} />
       <Backdrop
-        paused={panel === "album" || panel === "poem"}
+        paused={panel !== null}
         onReady={() => setBackdropReady(true)}
       />
 
@@ -109,85 +76,23 @@ export const Home = () => {
         <Steam className="h-9 w-9 text-crema/35" />
         <motion.h1
           className="mt-4 max-w-xl font-display text-3xl font-light italic leading-tight tracking-tight [text-wrap:balance] md:text-5xl"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+          {...fadeIn(0.3)}
         >
           {site.headline}
         </motion.h1>
 
-        <div className="relative mt-10">
+        <motion.div
+          className="mt-8"
+          {...fadeIn(0.9)}
+        >
           <button
             type="button"
-            onClick={pressButton}
-            disabled={pressed}
-            className="min-h-11 rounded-full border border-crema/25 px-6 py-2 text-sm text-crema/80 backdrop-blur-sm transition hover:border-caramel/70 hover:text-crema disabled:cursor-default disabled:opacity-60"
+            onClick={() => openNotes("write")}
+            className="min-h-10 rounded-full border border-crema/20 bg-roast/40 px-5 text-[13px] text-crema/90 shadow-lg shadow-black/20 backdrop-blur-md transition hover:border-caramel/60 hover:bg-roast/60 hover:text-crema sm:text-sm"
           >
-            {pressed ? "you pressed it anyway ☕" : "please, don't press this"}
+            write a letter for her
           </button>
-
-          <div className="pointer-events-none absolute left-1/2 top-1/2">
-            {particles.map((particle) =>
-              particle.kind === "bean" ? (
-                <motion.div
-                  key={particle.id}
-                  className="absolute"
-                  style={{
-                    width: particle.size,
-                    height: particle.size * 1.33,
-                    marginLeft: -particle.size / 2,
-                    marginTop: -particle.size / 2,
-                  }}
-                  initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-                  animate={{
-                    x: [0, particle.x * 0.6, particle.x],
-                    y: [0, -particle.lift, particle.y],
-                    rotate: particle.rotate,
-                    opacity: [1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 1.6,
-                    delay: particle.delay,
-                    times: [0, 0.3, 1],
-                    ease: ["easeOut", "easeIn"],
-                  }}
-                >
-                  <Bean color={particle.color} className="h-full w-full" />
-                </motion.div>
-              ) : (
-                <motion.span
-                  key={particle.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ fontSize: particle.size }}
-                  initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
-                  animate={{
-                    x: particle.x,
-                    y: particle.y,
-                    opacity: [0, 1, 0],
-                    scale: 1.1,
-                    rotate: particle.rotate,
-                  }}
-                  transition={{ duration: 2.4, delay: particle.delay, ease: "easeOut" }}
-                >
-                  ❤️
-                </motion.span>
-              )
-            )}
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {pressed && (
-            <motion.p
-              className="mt-6 max-w-sm font-display text-base italic text-crema/75"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
-              {site.secretNote}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        </motion.div>
       </div>
 
       {/* Album button */}
@@ -209,6 +114,32 @@ export const Home = () => {
       >
         <Moon className="h-6 w-6" />
       </button>
+
+      {/* A tiny mountain in the corner with a quiet secret */}
+      <div className="absolute bottom-5 right-5 z-20 flex flex-row-reverse items-center gap-2">
+        <button
+          type="button"
+          aria-label="A little secret"
+          onClick={() => setMountainNote((n) => n + 1)}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-crema/45 transition hover:text-crema/90 active:scale-90"
+        >
+          <MountainSnow className="h-[18px] w-[18px]" />
+        </button>
+        <AnimatePresence>
+          {mountainNote > 0 && (
+            <motion.p
+              key={mountainNote}
+              role="status"
+              className="font-display text-sm italic text-crema/75"
+              initial={{ opacity: 0, x: 6 }}
+              animate={{ opacity: [0, 1, 1, 0], x: 0 }}
+              transition={{ duration: 3, times: [0, 0.15, 0.8, 1] }}
+            >
+              {site.mountainNote}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Album */}
       <AnimatePresence>
@@ -244,6 +175,16 @@ export const Home = () => {
 
       <AnimatePresence>
         {panel === "poem" && <Poem onClose={closePanel} closeClassName={iconButton} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {panel === "notes" && (
+          <CoffeeNotes
+            focus={notesFocus}
+            onClose={closePanel}
+            closeClassName={iconButton}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
